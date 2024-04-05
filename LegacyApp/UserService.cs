@@ -4,26 +4,21 @@ namespace LegacyApp
 {
     public class UserService
     {
+        //Method to add a user
+        
+        //Delegating tasks such as input validation, age calculation, credit limit setting, and data storage
+        // to separate methods (Single Responsibility Principle).
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
-            {
+            // Checking for invalid inputs
+            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || !IsValidEmail(email))
                 return false;
-            }
-
-            if (!email.Contains("@") && !email.Contains("."))
-            {
-                return false;
-            }
-
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
-
+            
+            // Checking age requirement
+            var age = CalculateAge(dateOfBirth);
             if (age < 21)
-            {
                 return false;
-            }
+            
 
             var clientRepository = new ClientRepository();
             var client = clientRepository.GetById(clientId);
