@@ -19,10 +19,7 @@ namespace LegacyApp
             if (age < 21)
                 return false;
             
-
-            var clientRepository = new ClientRepository();
-            var client = clientRepository.GetById(clientId);
-
+            //Create user object
             var user = new User
             {
                 Client = client,
@@ -31,6 +28,18 @@ namespace LegacyApp
                 FirstName = firstName,
                 LastName = lastName
             };
+            
+            // Set credit limit based on client type
+            SetCreditLimit(user);
+
+            // Check if credit limit meets criteria
+            if (user.HasCreditLimit && user.CreditLimit < 500)
+                return false;
+
+            var clientRepository = new ClientRepository();
+            var client = clientRepository.GetById(clientId);
+
+            
             
             if (client.Type == "VeryImportantClient")
             {
