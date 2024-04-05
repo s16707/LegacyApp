@@ -51,6 +51,13 @@ namespace LegacyApp
                 age--;
             return age;
         }
+        // Method to calculate age
+        // Separating email validation into a separate method to improve code readability and promote
+        // reusability (SRP).
+        private bool IsValidEmail(string email)
+        {
+            return email.Contains("@") && email.Contains(".");
+        }
 
         if (client.Type == "VeryImportantClient")
             {
