@@ -59,34 +59,24 @@ namespace LegacyApp
             return email.Contains("@") && email.Contains(".");
         }
 
-        if (client.Type == "VeryImportantClient")
+        // Method to set credit limit for a user
+        // Extracting credit limit logic into a separate method improves code readability and promotes
+        // reusability (SRP).
+        private void SetCreditLimit(User user)
+        {
+            // Check client type and set credit limit accordingly
+            if (user.Client.Type == "VeryImportantClient")
             {
                 user.HasCreditLimit = false;
-            }
-            else if (client.Type == "ImportantClient")
-            {
-                using (var userCreditService = new UserCreditService())
-                {
-                    int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
-                    creditLimit = creditLimit * 2;
-                    user.CreditLimit = creditLimit;
-                }
             }
             else
             {
                 user.HasCreditLimit = true;
-                using (var userCreditService = new UserCreditService())
-                {
-                    int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
-                    user.CreditLimit = creditLimit;
-                }
+                user.CreditLimit = _creditService.GetCreditLimit(user.LastName, user.DateOfBirth);
+                if (user.Client.Type == "ImportantClient")
+                    user.CreditLimit *= 2; // Double the credit limit for important clients
             }
-            
-            if (user.HasCreditLimit && user.CreditLimit < 500)
-            {
-                return false;
-            }
-
+        }
             UserDataAccess.AddUser(user);
             return true;
         }
