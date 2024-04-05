@@ -13,12 +13,12 @@ namespace LegacyApp
             // Checking for invalid inputs
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || !IsValidEmail(email))
                 return false;
-            
+
             // Checking age requirement
             var age = CalculateAge(dateOfBirth);
             if (age < 21)
                 return false;
-            
+
             //Create user object
             var user = new User
             {
@@ -28,7 +28,7 @@ namespace LegacyApp
                 FirstName = firstName,
                 LastName = lastName
             };
-            
+
             // Set credit limit based on client type
             SetCreditLimit(user);
 
@@ -39,9 +39,20 @@ namespace LegacyApp
             var clientRepository = new ClientRepository();
             var client = clientRepository.GetById(clientId);
 
-            
-            
-            if (client.Type == "VeryImportantClient")
+        }
+        // Method to calculate age
+        // Extracting age calculation into a separate method to improve code readability and promote
+        // reusability (SRP).
+        private int CalculateAge(DateTime dateOfBirth)
+        {
+            var now = DateTime.Now;
+            int age = now.Year - dateOfBirth.Year;
+            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day))
+                age--;
+            return age;
+        }
+
+        if (client.Type == "VeryImportantClient")
             {
                 user.HasCreditLimit = false;
             }
