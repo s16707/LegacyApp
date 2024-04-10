@@ -1,39 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿namespace LegacyApp;
 
-namespace LegacyApp
+internal class UserCreditService : IUserCreditService
 {
-    internal class UserCreditService : IUserCreditService
+    private readonly IUserCreditRepository _userCreditRepository = new UserCreditRepository();
+    
+    public void CalculateUserCreditLimit(User user)
     {
-        /// <summary>
-        /// Simulating database
-        /// </summary>
-        private static readonly Dictionary<string, int> Database =
-            new Dictionary<string, int>()
-            {
-                {"Kowalski", 200},
-                {"Malewski", 20000},
-                {"Smith", 10000},
-                {"Doe", 3000},
-                {"Kwiatkowski", 1000}
-            };
-
-        /// <summary>
-        /// This method is simulating contact with remote service which is used to get info about someone's credit limit
-        /// </summary>
-        /// <returns>Client's credit limit</returns>
-        public int GetUserCreditLimit(string lastName)
+        if (user.Client.Type == "VeryImportantClient")
         {
-            var randomWaitingTime = new Random().Next(3000);
-            Thread.Sleep(randomWaitingTime);
-
-            return Database.GetValueOrDefault(lastName);
+            user.HasCreditLimit = false;
+        }
+        else
+        {
+            user.HasCreditLimit = true;
+            user.CreditLimit = _userCreditRepository.GetUserCreditLimit(user.LastName);
+            if (user.Client.Type == "ImportantClient")
+                user.CreditLimit *= 2; // Double the credit limit for important clients
         }
     }
+}
 
-    internal interface IUserCreditService
-    {
-        int GetUserCreditLimit(string lastName);
-    }
+internal interface IUserCreditService
+{
+    void CalculateUserCreditLimit(User user);
 }
