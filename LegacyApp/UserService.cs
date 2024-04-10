@@ -9,10 +9,11 @@ namespace LegacyApp
         private readonly IClientRepository _clientRepository = new ClientRepository();
 
         // Method to add a user
-        // Delegating tasks such as input validation, age calculation, credit limit setting, and data storage
+        // Delegating tasks such as input validation, credit limit calculation, and data storage
         // to separate methods (Single Responsibility Principle).
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
+            // Validate user
             UserValidator.ValidateUser(firstName, lastName, email, dateOfBirth);
 
             var client = _clientRepository.GetById(clientId);
@@ -20,18 +21,10 @@ namespace LegacyApp
             if (client is null)
                 return false;
 
-            //Create user object
-            var user = new User
-            {
-                Client = client,
-                DateOfBirth = dateOfBirth,
-                EmailAddress = email,
-                FirstName = firstName,
-                LastName = lastName
-            };
+            // Calculate credit limit based on client type
+            var creditLimit = _userCreditService.CalculateUserCreditLimit(client, lastName);
 
-            // Set credit limit based on client type
-            _userCreditService.CalculateUserCreditLimit(user);
+            var user = new User(client, dateOfBirth, email, firstName, lastName, creditLimit);
 
             // Check if credit limit meets criteria
             if (user.HasCreditLimit && user.CreditLimit < 500)

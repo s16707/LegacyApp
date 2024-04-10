@@ -3,24 +3,19 @@
 internal class UserCreditService : IUserCreditService
 {
     private readonly IUserCreditRepository _userCreditRepository = new UserCreditRepository();
-    
-    public void CalculateUserCreditLimit(User user)
+
+    public int CalculateUserCreditLimit(Client client, string userLastName)
     {
-        if (user.Client.Type == "VeryImportantClient")
-        {
-            user.HasCreditLimit = false;
-        }
-        else
-        {
-            user.HasCreditLimit = true;
-            user.CreditLimit = _userCreditRepository.GetUserCreditLimit(user.LastName);
-            if (user.Client.Type == "ImportantClient")
-                user.CreditLimit *= 2; // Double the credit limit for important clients
-        }
+        var creditLimit = _userCreditRepository.GetUserCreditLimit(userLastName);
+
+        if (client.IsImportantClient())
+            creditLimit *= 2; // Double the credit limit for important clients
+        
+        return creditLimit;
     }
 }
 
 internal interface IUserCreditService
 {
-    void CalculateUserCreditLimit(User user);
+    int CalculateUserCreditLimit(Client client, string userLastName);
 }
