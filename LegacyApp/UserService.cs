@@ -5,7 +5,7 @@ namespace LegacyApp
     public class UserService
     {
         // Introduced here interfaces but dependency injection cannot be achieved because 'Program.cs' file cannot be changed.
-        private readonly IUserCreditService _userCreditService = new UserCreditService();
+        private readonly ICreditService _creditService = new CreditService();
         private readonly IClientRepository _clientRepository = new ClientRepository();
 
         // Method to add a user
@@ -21,8 +21,8 @@ namespace LegacyApp
             if (client is null)
                 return false;
 
-            // Calculate credit limit based on client type
-            var creditLimit = _userCreditService.CalculateUserCreditLimit(client, lastName);
+            // Calculate credit limit for client
+            var creditLimit = _creditService.CalculateClientCreditLimit(client);
 
             var user = new User(client, dateOfBirth, email, firstName, lastName, creditLimit);
 

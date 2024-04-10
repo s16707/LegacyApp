@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace LegacyApp
 {
-    internal class UserCreditRepository : IUserCreditRepository
+    internal class ClientCreditRepository : IClientCreditRepository
     {
         /// <summary>
         /// Simulating database
@@ -23,17 +23,17 @@ namespace LegacyApp
         /// This method is simulating contact with remote service which is used to get info about someone's credit limit
         /// </summary>
         /// <returns>Client's credit limit</returns>
-        public int GetUserCreditLimit(string lastName)
+        public int GetClientCreditLimit(string clientName)
         {
             var randomWaitingTime = new Random().Next(3000);
             Thread.Sleep(randomWaitingTime);
 
-            return Database.GetValueOrDefault(lastName);
+            return Database.GetValueOrDefault(clientName);
         }
     }
 
-    internal interface IUserCreditRepository
+    internal interface IClientCreditRepository
     {
-        int GetUserCreditLimit(string lastName);
+        int GetClientCreditLimit(string clientName);
     }
 }
