@@ -4,12 +4,12 @@ using System.Threading;
 
 namespace LegacyApp
 {
-    public class UserCreditService : IDisposable
+    public class UserCreditService
     {
         /// <summary>
         /// Simulating database
         /// </summary>
-        private readonly Dictionary<string, int> _database =
+        private static readonly Dictionary<string, int> Database =
             new Dictionary<string, int>()
             {
                 {"Kowalski", 200},
@@ -18,25 +18,17 @@ namespace LegacyApp
                 {"Doe", 3000},
                 {"Kwiatkowski", 1000}
             };
-        
-        public void Dispose()
-        {
-            //Simulating disposing of resources
-        }
 
         /// <summary>
         /// This method is simulating contact with remote service which is used to get info about someone's credit limit
         /// </summary>
         /// <returns>Client's credit limit</returns>
-        internal int GetCreditLimit(string lastName, DateTime dateOfBirth)
+        internal int GetCreditLimit(string lastName)
         {
-            int randomWaitingTime = new Random().Next(3000);
+            var randomWaitingTime = new Random().Next(3000);
             Thread.Sleep(randomWaitingTime);
 
-            if (_database.ContainsKey(lastName))
-                return _database[lastName];
-
-            throw new ArgumentException($"Client {lastName} does not exist");
+            return Database.GetValueOrDefault(lastName);
         }
     }
 }
