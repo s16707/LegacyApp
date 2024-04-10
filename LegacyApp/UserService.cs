@@ -4,8 +4,12 @@ namespace LegacyApp
 {
     public class UserService
     {
-        //Method to add a user
-        //Delegating tasks such as input validation, age calculation, credit limit setting, and data storage
+        // Introduced here interfaces but dependency injection cannot be achieved because 'Program.cs' file cannot be changed.
+        private readonly IUserCreditService _userCreditService = new UserCreditService();
+        private readonly IClientRepository _clientRepository = new ClientRepository();
+
+        // Method to add a user
+        // Delegating tasks such as input validation, age calculation, credit limit setting, and data storage
         // to separate methods (Single Responsibility Principle).
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
@@ -18,8 +22,7 @@ namespace LegacyApp
             if (age < 21)
                 return false;
 
-            var clientRepository = new ClientRepository();
-            var client = clientRepository.GetById(clientId);
+            var client = _clientRepository.GetById(clientId);
 
             if (client is null)
                 return false;
@@ -80,8 +83,7 @@ namespace LegacyApp
             else
             {
                 user.HasCreditLimit = true;
-                var userCreditService = new UserCreditService();
-                user.CreditLimit = userCreditService.GetCreditLimit(user.LastName);
+                user.CreditLimit = _userCreditService.GetUserCreditLimit(user.LastName);
                 if (user.Client.Type == "ImportantClient")
                     user.CreditLimit *= 2; // Double the credit limit for important clients
             }
